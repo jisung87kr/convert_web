@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
         imagemagick \
         libmagickwand-dev \
         libmagickcore-dev \
+	#gnupg \ 
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install mysqli mysqli pdo pdo_mysql \
@@ -27,8 +28,8 @@ RUN apt-get update && apt-get install -y \
 RUN git clone https://github.com/Imagick/imagick /usr/src/php/ext/imagick; \
     docker-php-ext-install imagick
 
-RUN curl -sL "https://deb.nodesource.com/setup_14.x" | bash -
-RUN apt-get install -y nodejs
+RUN apt-get install -y nodejs \
+    npm
 
 RUN pecl install xdebug \
     && docker-php-ext-enable xdebug

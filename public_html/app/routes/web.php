@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ConvertController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,13 +15,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('convert.index');
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
 
-Route::get('/convert', function(){
-
+Route::prefix('convert')->name('convert.')->group(function(){
+    Route::get('/{type?}', [ConvertController::class, 'index'])->name('index');
+    Route::post('/process/{type}', [ConvertController::class, 'process'])->name('process');
 });
+

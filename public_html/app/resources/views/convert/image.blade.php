@@ -18,7 +18,7 @@
             </select>
         </div>
         <div class="col-2">
-            <input type="submit" class="btn btn-primary" name="변환하기">
+            <input type="submit" class="btn btn-primary" value="변환하기">
         </div>
     </form>
 </div>

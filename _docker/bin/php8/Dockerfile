@@ -1,4 +1,5 @@
-FROM php:8.1-apache
+FROM php:8.0.3-apache
+
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
@@ -14,13 +15,17 @@ RUN apt-get update && apt-get install -y \
         xfonts-75dpi \
         xfonts-base \
         wget \
+        git \
         imagemagick \
         libmagickwand-dev \
-        git \
+        libmagickcore-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-install mysqli mysqli pdo pdo_mysql \
     && a2enmod rewrite
+
+RUN git clone https://github.com/Imagick/imagick /usr/src/php/ext/imagick; \
+    docker-php-ext-install imagick
 
 RUN curl -sL "https://deb.nodesource.com/setup_14.x" | bash -
 RUN apt-get install -y nodejs
@@ -42,12 +47,5 @@ RUN dpkg -i 'wkhtmltox_0.12.6-1.buster_amd64.deb'
 RUN curl -o nanumfont.zip http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip
 RUN unzip -d /usr/share/fonts/nanum nanumfont.zip
 RUN fc-cache -f -v
-
-RUN git clone https://github.com/Imagick/imagick
-RUN cd imagick
-RUN phpize && ./configure
-RUN make && make install
-
-echo 'extension=imagick.so' >> /usr/local/etc/php/php.ini
 
 ENV PATH $PATH:~/.composer/vendor/bin

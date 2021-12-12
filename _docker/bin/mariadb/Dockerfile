@@ -1,4 +1,4 @@
-FROM mariadb:10.5.9-focal
+FROM mariadb
 RUN apt-get update && apt-get install -y \
     vim \
     && touch "/var/lib/mysql/error.log" \

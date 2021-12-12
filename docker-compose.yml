@@ -1,0 +1,47 @@
+version: "3.2"
+
+services:
+  web:
+    build:
+      context: ./_docker/bin/php8
+    restart: always
+    container_name: web_laravel
+    ports:
+      - "${HTTP_PORT}:80"
+      - "${HTTPS_PORT}:8080"
+    volumes:
+      - ./public_html:/var/www/html
+      - ./_docker/conf/php8/php.ini:/usr/local/etc/php/php.ini
+      - ./_docker/conf/php8/apache2.conf:/etc/apache2/apache2.conf
+      - ./_docker/conf/php8/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./_docker/log/php8/:/var/log/apache2
+    links:
+      - "db:mariadb"
+
+  db:
+    build:
+      context: ./_docker/bin/mariadb
+    restart: always
+    container_name: db_laravel
+    ports:
+      - "${DB_PORT}:3306"
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - ./db_data:/var/lib/mysql
+      - ./_docker/conf/mariadb/my.cnf:/etc/mysql/my.cnf
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    container_name: phpmyadmin_laravel
+    ports:
+      - '${PHPMYADMIN_PORT}:80'
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: password
+    links:
+      - db
